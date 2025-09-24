@@ -17,7 +17,7 @@ fun App() {
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = AppRoute.Splash) {
             composable<AppRoute.Splash> {
-                SplashScreen()
+                SplashScreen(navController = navController)
             }
             composable<AppRoute.Home> {
                 HomeScreen()
