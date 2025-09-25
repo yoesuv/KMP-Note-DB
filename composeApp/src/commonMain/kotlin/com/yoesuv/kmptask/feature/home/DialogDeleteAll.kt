@@ -6,43 +6,34 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.yoesuv.kmptask.core.theme.AppColors
 import kmpmytask.composeapp.generated.resources.Res
-import kmpmytask.composeapp.generated.resources.add_task
 import kmpmytask.composeapp.generated.resources.cancel
-import kmpmytask.composeapp.generated.resources.content
-import kmpmytask.composeapp.generated.resources.save
-import kmpmytask.composeapp.generated.resources.title
+import kmpmytask.composeapp.generated.resources.delete
+import kmpmytask.composeapp.generated.resources.delete_all
+import kmpmytask.composeapp.generated.resources.delete_all_tasks
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun DialogAddEditTask(
+fun DialogDeleteAll(
     onDismiss: () -> Unit,
-    onConfirm: (title: String, content: String) -> Unit
+    onConfirm: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
-
     Dialog(
         onDismissRequest = onDismiss
     ) {
@@ -64,7 +55,7 @@ fun DialogAddEditTask(
                     )
             ) {
                 Text(
-                    text = stringResource(Res.string.add_task),
+                    text = stringResource(Res.string.delete_all),
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -78,26 +69,15 @@ fun DialogAddEditTask(
             // Content section with padding
             Column(
                 modifier = Modifier.padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text(stringResource(Res.string.title)) },
+                Text(
+                    text = stringResource(Res.string.delete_all_tasks),
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                OutlinedTextField(
-                    value = content,
-                    onValueChange = { content = it },
-                    label = { Text(stringResource(Res.string.content)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
-                    maxLines = 5,
-                    singleLine = false
-                )
-
                 // Buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -112,16 +92,12 @@ fun DialogAddEditTask(
 
                     Button(
                         onClick = {
-                            if (title.isNotBlank() && content.isNotBlank()) {
-                                onConfirm(title, content)
-                                title = ""
-                                content = ""
-                            }
+                            onConfirm()
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Pink500)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                     ) {
-                        Text(stringResource(Res.string.save), color = Color.White)
+                        Text(stringResource(Res.string.delete), color = Color.White)
                     }
                 }
             }

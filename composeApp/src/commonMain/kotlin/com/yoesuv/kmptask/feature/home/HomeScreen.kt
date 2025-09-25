@@ -28,13 +28,14 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun HomeScreen() {
     var showDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             AppTopBar(
                 title = stringResource(Res.string.app_name),
                 canBack = false,
                 trailingIcon = Icons.Default.Delete,
-                onTrailingIconClick = { /* TODO: delete all function */ }
+                onTrailingIconClick = { showDeleteDialog = true }
             )
         },
         floatingActionButton = {
@@ -63,6 +64,17 @@ fun HomeScreen() {
                 // TODO: Handle adding the task
                 println("Adding task: $title - $content")
                 showDialog = false
+            }
+        )
+    }
+
+    if (showDeleteDialog) {
+        DialogDeleteAll(
+            onDismiss = { showDeleteDialog = false },
+            onConfirm = {
+                // TODO: Handle deleting all tasks
+                println("Deleting all tasks")
+                showDeleteDialog = false
             }
         )
     }
