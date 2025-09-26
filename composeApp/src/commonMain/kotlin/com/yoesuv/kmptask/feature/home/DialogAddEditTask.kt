@@ -9,11 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +31,8 @@ import kmpmytask.composeapp.generated.resources.content
 import kmpmytask.composeapp.generated.resources.save
 import kmpmytask.composeapp.generated.resources.title
 import org.jetbrains.compose.resources.stringResource
+import com.yoesuv.kmptask.feature.components.AppButton
+import com.yoesuv.kmptask.feature.components.AppButtonStyle
 
 @Composable
 fun DialogAddEditTask(
@@ -103,14 +102,16 @@ fun DialogAddEditTask(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    TextButton(
+                    AppButton(
+                        text = stringResource(Res.string.cancel),
+                        style = AppButtonStyle.Bordered,
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f)
-                    ) {
-                        Text(stringResource(Res.string.cancel))
-                    }
+                    )
 
-                    Button(
+                    AppButton(
+                        text = stringResource(Res.string.save),
+                        style = AppButtonStyle.Filled,
                         onClick = {
                             if (title.isNotBlank() && content.isNotBlank()) {
                                 onConfirm(title, content)
@@ -118,11 +119,8 @@ fun DialogAddEditTask(
                                 content = ""
                             }
                         },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Pink500)
-                    ) {
-                        Text(stringResource(Res.string.save), color = Color.White)
-                    }
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }

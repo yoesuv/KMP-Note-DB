@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +25,8 @@ import kmpmytask.composeapp.generated.resources.delete
 import kmpmytask.composeapp.generated.resources.delete_all
 import kmpmytask.composeapp.generated.resources.delete_all_tasks
 import org.jetbrains.compose.resources.stringResource
+import com.yoesuv.kmptask.feature.components.AppButton
+import com.yoesuv.kmptask.feature.components.AppButtonStyle
 
 @Composable
 fun DialogDeleteAll(
@@ -83,22 +82,19 @@ fun DialogDeleteAll(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    TextButton(
+                    AppButton(
+                        text = stringResource(Res.string.cancel),
+                        style = AppButtonStyle.Bordered,
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f)
-                    ) {
-                        Text(stringResource(Res.string.cancel))
-                    }
+                    )
 
-                    Button(
-                        onClick = {
-                            onConfirm()
-                        },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                    ) {
-                        Text(stringResource(Res.string.delete), color = Color.White)
-                    }
+                    AppButton(
+                        text = stringResource(Res.string.delete),
+                        style = AppButtonStyle.Filled,
+                        onClick = onConfirm,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }
