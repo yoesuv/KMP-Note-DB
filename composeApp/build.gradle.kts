@@ -15,6 +15,7 @@ kotlin {
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
     
@@ -98,8 +99,20 @@ dependencies {
 // https://github.com/google/ksp/issues/2442
 project.afterEvaluate {
     tasks.named("kspDebugKotlinAndroid") {
+        // Ensure Compose resource generation tasks have completed before running KSP for Android
         dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
-        enabled = false
+        dependsOn(tasks.named("generateResourceAccessorsForAndroidDebug"))
+        dependsOn(tasks.named("generateActualResourceCollectorsForAndroidMain"))
+        dependsOn(tasks.named("generateComposeResClass"))
+        dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
+        dependsOn(tasks.named("generateExpectResourceCollectorsForCommonMain"))
+    }
+    tasks.named("kspReleaseKotlinAndroid") {
+        // Same ordering for release variant
+        dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
+        dependsOn(tasks.named("generateComposeResClass"))
+        dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
+        dependsOn(tasks.named("generateExpectResourceCollectorsForCommonMain"))
     }
     tasks.named("kspKotlinIosSimulatorArm64") {
         // Ensure Compose resource generation tasks have completed before running KSP for iOS
