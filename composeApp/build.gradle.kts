@@ -102,8 +102,15 @@ project.afterEvaluate {
         enabled = false
     }
     tasks.named("kspKotlinIosSimulatorArm64") {
+        // Ensure Compose resource generation tasks have completed before running KSP for iOS
+        dependsOn(tasks.named("generateActualResourceCollectorsForIosSimulatorArm64Main"))
         dependsOn(tasks.named("generateResourceAccessorsForIosSimulatorArm64Main"))
-        enabled = false
+        dependsOn(tasks.named("generateResourceAccessorsForIosMain"))
+        dependsOn(tasks.named("generateResourceAccessorsForAppleMain"))
+        dependsOn(tasks.named("generateResourceAccessorsForNativeMain"))
+        dependsOn(tasks.named("generateComposeResClass"))
+        dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
+        dependsOn(tasks.named("generateExpectResourceCollectorsForCommonMain"))
     }
 }
 

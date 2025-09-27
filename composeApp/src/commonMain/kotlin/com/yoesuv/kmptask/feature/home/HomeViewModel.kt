@@ -1,41 +1,45 @@
 package com.yoesuv.kmptask.feature.home
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.yoesuv.kmptask.core.db.MyTaskDao
 import com.yoesuv.kmptask.core.models.MyTaskModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 
-class HomeViewModel {
-    val tasks: SnapshotStateList<MyTaskModel> = mutableStateListOf()
+class HomeViewModel(
+    private val dao: MyTaskDao
+) {
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
-    init {
-        tasks.addAll(
-            listOf(
+    // Expose Room Flow as StateFlow for UI consumption
+    val tasks: StateFlow<List<MyTaskModel>> =
+        dao.getAll().stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+
+    fun addTask(title: String, content: String) {
+        val trimmedTitle = title.trim()
+        val trimmedContent = content.trim()
+        if (trimmedTitle.isEmpty() || trimmedContent.isEmpty()) return
+        scope.launch {
+            dao.insert(
                 MyTaskModel(
-                    idTask = 1,
-                    title = "Buy groceries",
-                    description = "Milk, eggs, bread, and fruits"
-                ),
-                MyTaskModel(
-                    idTask = 2,
-                    title = "Workout",
-                    description = "Evening run for 30 minutes"
-                ),
-                MyTaskModel(
-                    idTask = 3,
-                    title = "Read a book",
-                    description = "Continue reading the Kotlin Coroutines chapter"
-                ),
-                MyTaskModel(
-                    idTask = 4,
-                    title = "Call mom",
-                    description = "Catch up and plan weekend visit"
-                ),
-                MyTaskModel(
-                    idTask = 5,
-                    title = "Prepare presentation",
-                    description = "Draft slides for Monday's meeting"
+                    title = trimmedTitle,
+                    description = trimmedContent
                 )
             )
-        )
+        }
+    }
+
+    fun deleteAll() {
+        scope.launch {
+            dao.deleteAll()
+        }
     }
 }

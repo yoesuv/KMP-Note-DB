@@ -12,12 +12,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.yoesuv.kmptask.core.db.rememberMyTaskDao
 import com.yoesuv.kmptask.core.theme.AppColors
 import com.yoesuv.kmptask.feature.components.AppTopBar
 import kmpmytask.composeapp.generated.resources.Res
@@ -28,7 +30,9 @@ import org.jetbrains.compose.resources.stringResource
 fun HomeScreen() {
     var showDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
-    val viewModel = remember { HomeViewModel() }
+    val dao = rememberMyTaskDao()
+    val viewModel = remember(dao) { HomeViewModel(dao) }
+    val tasks by viewModel.tasks.collectAsState()
     Scaffold(
         topBar = {
             AppTopBar(
@@ -51,7 +55,7 @@ fun HomeScreen() {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            items(viewModel.tasks) { task ->
+            items(tasks) { task ->
                 ItemTask(myTask = task)
                 HorizontalDivider()
             }
@@ -62,8 +66,7 @@ fun HomeScreen() {
         DialogAddEditTask(
             onDismiss = { showDialog = false },
             onConfirm = { title, content ->
-                // TODO: Handle adding the task
-                println("Adding task: $title - $content")
+                viewModel.addTask(title, content)
                 showDialog = false
             }
         )
@@ -73,8 +76,7 @@ fun HomeScreen() {
         DialogDeleteAll(
             onDismiss = { showDeleteDialog = false },
             onConfirm = {
-                // TODO: Handle deleting all tasks
-                println("Deleting all tasks")
+                viewModel.deleteAll()
                 showDeleteDialog = false
             }
         )
