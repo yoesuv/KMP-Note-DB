@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.yoesuv.kmptask.core.models.MyTaskModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -36,9 +37,11 @@ fun ItemTask(
         ) {
             Text(
                 text = myTask.title,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.SemiBold
+                )
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = myTask.description,
                 style = MaterialTheme.typography.bodyMedium
