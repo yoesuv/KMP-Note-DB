@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.yoesuv.kmptask.core.db.rememberMyTaskDao
+import com.yoesuv.kmptask.core.db.rememberAppDatabase
 import com.yoesuv.kmptask.core.theme.AppColors
 import com.yoesuv.kmptask.feature.components.AppTopBar
 import kmpmytask.composeapp.generated.resources.Res
@@ -30,7 +30,8 @@ import org.jetbrains.compose.resources.stringResource
 fun HomeScreen() {
     var showDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
-    val dao = rememberMyTaskDao()
+    val db = rememberAppDatabase()
+    val dao = remember(db) { db.myTaskDao() }
     val viewModel = remember(dao) { HomeViewModel(dao) }
     val tasks by viewModel.tasks.collectAsState()
     Scaffold(

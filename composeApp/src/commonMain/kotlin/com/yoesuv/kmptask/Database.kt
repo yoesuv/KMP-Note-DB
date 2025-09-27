@@ -5,12 +5,13 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.yoesuv.kmptask.core.data.Constants
 import com.yoesuv.kmptask.core.db.MyTaskDao
 import com.yoesuv.kmptask.core.models.MyTaskModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
-@Database(entities = [MyTaskModel::class], version = 1)
+@Database(entities = [MyTaskModel::class], version = Constants.DATABASE_VERSION)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun myTaskDao(): MyTaskDao

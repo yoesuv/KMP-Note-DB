@@ -1,9 +1,10 @@
 package com.yoesuv.kmptask.core.db
 
 import androidx.compose.runtime.Composable
+import com.yoesuv.kmptask.AppDatabase
 
-// Expect/Actual composable to provide a MyTaskDao instance per platform.
-// The actual implementations will build the database with the proper builder
-// and return the DAO. Using @Composable allows us to remember/cache the instance.
+// New: Provide the full Room database so multiple DAOs can be accessed from one source.
+// This mirrors the approach in the official KMP Room docs where you inject the database
+// and then access the DAOs as needed.
 @Composable
-expect fun rememberMyTaskDao(): MyTaskDao
+expect fun rememberAppDatabase(): AppDatabase

@@ -2,13 +2,14 @@ package com.yoesuv.kmptask
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.yoesuv.kmptask.core.data.Constants
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
-    val dbFilePath = documentDirectory() + "/my_room.db"
+    val dbFilePath = documentDirectory() + "/" + Constants.DATABASE_NAME
     return Room.databaseBuilder<AppDatabase>(
         name = dbFilePath,
     )
