@@ -1,10 +1,9 @@
 package com.yoesuv.kmptask.feature.home
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.yoesuv.kmptask.core.db.MyTaskDao
 import com.yoesuv.kmptask.core.models.MyTaskModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,13 +11,12 @@ import kotlinx.coroutines.flow.stateIn
 
 class HomeViewModel(
     private val dao: MyTaskDao
-) {
-    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+): ViewModel() {
 
     // Expose Room Flow as StateFlow for UI consumption
     val tasks: StateFlow<List<MyTaskModel>> =
         dao.getAll().stateIn(
-            scope = scope,
+            scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyList()
         )
@@ -27,7 +25,7 @@ class HomeViewModel(
         val trimmedTitle = title.trim()
         val trimmedContent = content.trim()
         if (trimmedTitle.isEmpty() || trimmedContent.isEmpty()) return
-        scope.launch {
+        viewModelScope.launch {
             dao.insert(
                 MyTaskModel(
                     title = trimmedTitle,
@@ -38,13 +36,13 @@ class HomeViewModel(
     }
 
     fun deleteAll() {
-        scope.launch {
+        viewModelScope.launch {
             dao.deleteAll()
         }
     }
 
     fun deleteTask(task: MyTaskModel) {
-        scope.launch {
+        viewModelScope.launch {
             dao.delete(task)
         }
     }
