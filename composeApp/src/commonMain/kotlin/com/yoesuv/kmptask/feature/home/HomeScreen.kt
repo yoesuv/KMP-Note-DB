@@ -30,6 +30,7 @@ import org.jetbrains.compose.resources.stringResource
 fun HomeScreen() {
     var showDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showTaskOptionsDialog by remember { mutableStateOf(false) }
     val db = rememberAppDatabase()
     val dao = remember(db) { db.myTaskDao() }
     val viewModel = remember(dao) { HomeViewModel(dao) }
@@ -57,7 +58,7 @@ fun HomeScreen() {
                 .padding(padding)
         ) {
             items(tasks) { task ->
-                ItemTask(myTask = task)
+                ItemTask(myTask = task, onMoreClick = { showTaskOptionsDialog = true })
                 HorizontalDivider()
             }
         }
@@ -80,6 +81,14 @@ fun HomeScreen() {
                 viewModel.deleteAll()
                 showDeleteDialog = false
             }
+        )
+    }
+
+    if (showTaskOptionsDialog) {
+        DialogTaskOptions(
+            onDismiss = { showTaskOptionsDialog = false },
+            onEdit = {},
+            onDelete = {}
         )
     }
 }
