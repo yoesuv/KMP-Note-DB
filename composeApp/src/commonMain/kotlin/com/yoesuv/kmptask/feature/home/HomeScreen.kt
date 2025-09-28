@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.yoesuv.kmptask.core.db.rememberAppDatabase
+import com.yoesuv.kmptask.core.models.MyTaskModel
 import com.yoesuv.kmptask.core.theme.AppColors
 import com.yoesuv.kmptask.feature.components.AppTopBar
 import kmpmytask.composeapp.generated.resources.Res
@@ -31,6 +32,7 @@ fun HomeScreen() {
     var showDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showTaskOptionsDialog by remember { mutableStateOf(false) }
+    var selectedTask by remember { mutableStateOf<MyTaskModel?>(null) }
     val db = rememberAppDatabase()
     val dao = remember(db) { db.myTaskDao() }
     val viewModel = remember(dao) { HomeViewModel(dao) }
@@ -58,7 +60,7 @@ fun HomeScreen() {
                 .padding(padding)
         ) {
             items(tasks) { task ->
-                ItemTask(myTask = task, onMoreClick = { showTaskOptionsDialog = true })
+                ItemTask(myTask = task, onMoreClick = { showTaskOptionsDialog = true; selectedTask = task })
                 HorizontalDivider()
             }
         }
@@ -86,6 +88,7 @@ fun HomeScreen() {
 
     if (showTaskOptionsDialog) {
         DialogTaskOptions(
+            task = selectedTask,
             onDismiss = { showTaskOptionsDialog = false },
             onEdit = {},
             onDelete = {}

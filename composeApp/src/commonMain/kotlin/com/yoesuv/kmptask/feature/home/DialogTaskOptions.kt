@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.yoesuv.kmptask.core.models.MyTaskModel
 import com.yoesuv.kmptask.core.theme.AppColors
 import com.yoesuv.kmptask.feature.components.AppButton
 import com.yoesuv.kmptask.feature.components.AppButtonStyle
@@ -24,10 +26,10 @@ import org.jetbrains.compose.resources.stringResource
 import kmpmytask.composeapp.generated.resources.Res
 import kmpmytask.composeapp.generated.resources.delete_task
 import kmpmytask.composeapp.generated.resources.edit_task
-import kmpmytask.composeapp.generated.resources.task_options
 
 @Composable
 fun DialogTaskOptions(
+    task: MyTaskModel?,
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit
@@ -51,18 +53,19 @@ fun DialogTaskOptions(
                     )
             ) {
                 Text(
-                    text = stringResource(Res.string.task_options),
+                    text = task?.title ?: "",
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp, horizontal = 16.dp)
+                        .padding(vertical = 16.dp, horizontal = 16.dp),
+                    maxLines = 1
                 )
             }
 
-            // Content section with buttons in a column
+            // Content section with task title and buttons in a column
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
