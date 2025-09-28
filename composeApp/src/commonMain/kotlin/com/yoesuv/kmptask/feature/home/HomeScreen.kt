@@ -91,7 +91,11 @@ fun HomeScreen() {
             task = selectedTask,
             onDismiss = { showTaskOptionsDialog = false },
             onEdit = {},
-            onDelete = {}
+            onDelete = {
+                selectedTask?.let { viewModel.deleteTask(it) }
+                showTaskOptionsDialog = false
+                selectedTask = null
+            }
         )
     }
 }

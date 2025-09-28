@@ -42,4 +42,11 @@ class HomeViewModel(
             dao.deleteAll()
         }
     }
+
+    fun deleteTask(task: MyTaskModel) {
+        scope.launch {
+            dao.delete(task)
+        }
+    }
 }
+
