@@ -24,23 +24,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yoesuv.kmptask.core.theme.AppColors
+import com.yoesuv.kmptask.core.models.MyTaskModel
 import kmpmytask.composeapp.generated.resources.Res
 import kmpmytask.composeapp.generated.resources.add_task
 import kmpmytask.composeapp.generated.resources.cancel
 import kmpmytask.composeapp.generated.resources.content
 import kmpmytask.composeapp.generated.resources.save
 import kmpmytask.composeapp.generated.resources.title
+import kmpmytask.composeapp.generated.resources.update
+import kmpmytask.composeapp.generated.resources.update_task
 import org.jetbrains.compose.resources.stringResource
 import com.yoesuv.kmptask.feature.components.AppButton
 import com.yoesuv.kmptask.feature.components.AppButtonStyle
 
 @Composable
 fun DialogAddEditTask(
+    taskToEdit: MyTaskModel? = null,
     onDismiss: () -> Unit,
     onConfirm: (title: String, content: String) -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
+    val isEditMode = taskToEdit != null
+    var title by remember { mutableStateOf(taskToEdit?.title ?: "") }
+    var content by remember { mutableStateOf(taskToEdit?.description ?: "") }
 
     Dialog(
         onDismissRequest = onDismiss
@@ -63,7 +68,7 @@ fun DialogAddEditTask(
                     )
             ) {
                 Text(
-                    text = stringResource(Res.string.add_task),
+                    text = stringResource(if (isEditMode) Res.string.update_task else Res.string.add_task),
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -110,13 +115,15 @@ fun DialogAddEditTask(
                     )
 
                     AppButton(
-                        text = stringResource(Res.string.save),
+                        text = stringResource(if (isEditMode) Res.string.update else Res.string.save),
                         style = AppButtonStyle.Filled,
                         onClick = {
                             if (title.isNotBlank() && content.isNotBlank()) {
                                 onConfirm(title, content)
-                                title = ""
-                                content = ""
+                                if (!isEditMode) {
+                                    title = ""
+                                    content = ""
+                                }
                             }
                         },
                         modifier = Modifier.weight(1f)

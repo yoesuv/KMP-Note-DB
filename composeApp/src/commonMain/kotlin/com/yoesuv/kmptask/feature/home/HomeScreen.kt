@@ -33,7 +33,8 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeScreen() {
-    var showDialog by remember { mutableStateOf(false) }
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showTaskOptionsDialog by remember { mutableStateOf(false) }
     var selectedTask by remember { mutableStateOf<MyTaskModel?>(null) }
@@ -54,7 +55,7 @@ fun HomeScreen() {
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = AppColors.Pink500,
-                onClick = { showDialog = true }
+                onClick = { showAddDialog = true }
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add task", tint = Color.White)
             }
@@ -89,12 +90,28 @@ fun HomeScreen() {
         }
     }
 
-    if (showDialog) {
+    if (showAddDialog) {
         DialogAddEditTask(
-            onDismiss = { showDialog = false },
+            onDismiss = { showAddDialog = false },
             onConfirm = { title, content ->
                 viewModel.addTask(title, content)
-                showDialog = false
+                showAddDialog = false
+            }
+        )
+    }
+
+    if (showEditDialog) {
+        DialogAddEditTask(
+            taskToEdit = selectedTask,
+            onDismiss = { 
+                showEditDialog = false
+                selectedTask = null
+            },
+            onConfirm = { title, content ->
+                // TODO: Add update logic in HomeViewModel later
+                // For now, just close the dialog to test the data flow
+                showEditDialog = false
+                selectedTask = null
             }
         )
     }
@@ -112,8 +129,13 @@ fun HomeScreen() {
     if (showTaskOptionsDialog) {
         DialogTaskOptions(
             task = selectedTask,
-            onDismiss = { showTaskOptionsDialog = false },
-            onEdit = {},
+            onDismiss = { 
+                showTaskOptionsDialog = false
+            },
+            onEdit = {
+                showTaskOptionsDialog = false
+                showEditDialog = true
+            },
             onDelete = {
                 selectedTask?.let { viewModel.deleteTask(it) }
                 showTaskOptionsDialog = false
