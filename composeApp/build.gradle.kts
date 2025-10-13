@@ -68,6 +68,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0.0"
+        setProperty("archivesBaseName", "$applicationId-v$versionName")
     }
     packaging {
         resources {
@@ -110,6 +111,8 @@ project.afterEvaluate {
     tasks.named("kspReleaseKotlinAndroid") {
         // Same ordering for release variant
         dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
+        dependsOn(tasks.named("generateResourceAccessorsForAndroidRelease"))
+        dependsOn(tasks.named("generateActualResourceCollectorsForAndroidMain"))
         dependsOn(tasks.named("generateComposeResClass"))
         dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
         dependsOn(tasks.named("generateExpectResourceCollectorsForCommonMain"))
