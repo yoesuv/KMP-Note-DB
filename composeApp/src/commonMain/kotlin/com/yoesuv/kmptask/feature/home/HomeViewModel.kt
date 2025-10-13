@@ -35,6 +35,20 @@ class HomeViewModel(
         }
     }
 
+    fun editTask(task: MyTaskModel, newTitle: String, newContent: String) {
+        val trimmedTitle = newTitle.trim()
+        val trimmedContent = newContent.trim()
+        if (trimmedTitle.isEmpty() || trimmedContent.isEmpty()) return
+        viewModelScope.launch {
+            dao.update(
+                task.copy(
+                    title = trimmedTitle,
+                    description = trimmedContent
+                )
+            )
+        }
+    }
+
     fun deleteAll() {
         viewModelScope.launch {
             dao.deleteAll()
@@ -47,4 +61,3 @@ class HomeViewModel(
         }
     }
 }
-

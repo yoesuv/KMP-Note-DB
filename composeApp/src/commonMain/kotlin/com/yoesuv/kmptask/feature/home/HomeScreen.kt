@@ -108,8 +108,9 @@ fun HomeScreen() {
                 selectedTask = null
             },
             onConfirm = { title, content ->
-                // TODO: Add update logic in HomeViewModel later
-                // For now, just close the dialog to test the data flow
+                selectedTask?.let { task ->
+                    viewModel.editTask(task, title, content)
+                }
                 showEditDialog = false
                 selectedTask = null
             }
