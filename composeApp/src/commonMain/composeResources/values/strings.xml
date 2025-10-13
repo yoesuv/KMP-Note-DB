@@ -8,4 +8,9 @@
     <string name="delete">Delete</string>
     <string name="delete_all">Delete All</string>
     <string name="delete_all_tasks">Are you sure you want to delete all tasks?</string>
+    <string name="edit_task">Edit</string>
+    <string name="update_task">Update Task</string>
+    <string name="update">Update</string>
+    <string name="delete_task">Delete</string>
+    <string name="empty_task">Empty task</string>
 </resources>

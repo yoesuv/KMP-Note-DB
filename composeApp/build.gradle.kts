@@ -15,6 +15,7 @@ kotlin {
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
     
@@ -25,6 +26,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            linkerOpts.add("-lsqlite3")
         }
     }
     
@@ -48,6 +50,7 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.material.icons.extended)
+            implementation(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -65,6 +68,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0.0"
+        setProperty("archivesBaseName", "$applicationId-v$versionName")
     }
     packaging {
         resources {
@@ -96,12 +100,33 @@ dependencies {
 // https://github.com/google/ksp/issues/2442
 project.afterEvaluate {
     tasks.named("kspDebugKotlinAndroid") {
+        // Ensure Compose resource generation tasks have completed before running KSP for Android
         dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
-        enabled = false
+        dependsOn(tasks.named("generateResourceAccessorsForAndroidDebug"))
+        dependsOn(tasks.named("generateActualResourceCollectorsForAndroidMain"))
+        dependsOn(tasks.named("generateComposeResClass"))
+        dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
+        dependsOn(tasks.named("generateExpectResourceCollectorsForCommonMain"))
+    }
+    tasks.named("kspReleaseKotlinAndroid") {
+        // Same ordering for release variant
+        dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
+        dependsOn(tasks.named("generateResourceAccessorsForAndroidRelease"))
+        dependsOn(tasks.named("generateActualResourceCollectorsForAndroidMain"))
+        dependsOn(tasks.named("generateComposeResClass"))
+        dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
+        dependsOn(tasks.named("generateExpectResourceCollectorsForCommonMain"))
     }
     tasks.named("kspKotlinIosSimulatorArm64") {
+        // Ensure Compose resource generation tasks have completed before running KSP for iOS
+        dependsOn(tasks.named("generateActualResourceCollectorsForIosSimulatorArm64Main"))
         dependsOn(tasks.named("generateResourceAccessorsForIosSimulatorArm64Main"))
-        enabled = false
+        dependsOn(tasks.named("generateResourceAccessorsForIosMain"))
+        dependsOn(tasks.named("generateResourceAccessorsForAppleMain"))
+        dependsOn(tasks.named("generateResourceAccessorsForNativeMain"))
+        dependsOn(tasks.named("generateComposeResClass"))
+        dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
+        dependsOn(tasks.named("generateExpectResourceCollectorsForCommonMain"))
     }
 }
 

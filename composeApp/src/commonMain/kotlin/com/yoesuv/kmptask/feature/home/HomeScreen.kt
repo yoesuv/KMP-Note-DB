@@ -1,5 +1,6 @@
 package com.yoesuv.kmptask.feature.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,24 +12,37 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.yoesuv.kmptask.core.db.rememberAppDatabase
+import com.yoesuv.kmptask.core.models.MyTaskModel
 import com.yoesuv.kmptask.core.theme.AppColors
 import com.yoesuv.kmptask.feature.components.AppTopBar
 import kmpmytask.composeapp.generated.resources.Res
 import kmpmytask.composeapp.generated.resources.app_name
+import kmpmytask.composeapp.generated.resources.empty_task
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeScreen() {
-    var showDialog by remember { mutableStateOf(false) }
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
-    val viewModel = remember { HomeViewModel() }
+    var showTaskOptionsDialog by remember { mutableStateOf(false) }
+    var selectedTask by remember { mutableStateOf<MyTaskModel?>(null) }
+    val db = rememberAppDatabase()
+    val dao = remember(db) { db.myTaskDao() }
+    val viewModel = remember(dao) { HomeViewModel(dao) }
+    val tasks by viewModel.tasks.collectAsState()
+
     Scaffold(
         topBar = {
             AppTopBar(
@@ -41,30 +55,64 @@ fun HomeScreen() {
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = AppColors.Pink500,
-                onClick = { showDialog = true }) {
+                onClick = { showAddDialog = true }
+            ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add task", tint = Color.White)
             }
         }
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            items(viewModel.tasks) { task ->
-                ItemTask(myTask = task)
-                HorizontalDivider()
+        if (tasks.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(Res.string.empty_task),
+                    color = Color.Gray
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                items(tasks) { task ->
+                    ItemTask(
+                        myTask = task,
+                        onMoreClick = { showTaskOptionsDialog = true; selectedTask = task }
+                    )
+                    HorizontalDivider()
+                }
             }
         }
     }
 
-    if (showDialog) {
+    if (showAddDialog) {
         DialogAddEditTask(
-            onDismiss = { showDialog = false },
+            onDismiss = { showAddDialog = false },
             onConfirm = { title, content ->
-                // TODO: Handle adding the task
-                println("Adding task: $title - $content")
-                showDialog = false
+                viewModel.addTask(title, content)
+                showAddDialog = false
+            }
+        )
+    }
+
+    if (showEditDialog) {
+        DialogAddEditTask(
+            taskToEdit = selectedTask,
+            onDismiss = { 
+                showEditDialog = false
+                selectedTask = null
+            },
+            onConfirm = { title, content ->
+                selectedTask?.let { task ->
+                    viewModel.editTask(task, title, content)
+                }
+                showEditDialog = false
+                selectedTask = null
             }
         )
     }
@@ -73,9 +121,26 @@ fun HomeScreen() {
         DialogDeleteAll(
             onDismiss = { showDeleteDialog = false },
             onConfirm = {
-                // TODO: Handle deleting all tasks
-                println("Deleting all tasks")
+                viewModel.deleteAll()
                 showDeleteDialog = false
+            }
+        )
+    }
+
+    if (showTaskOptionsDialog) {
+        DialogTaskOptions(
+            task = selectedTask,
+            onDismiss = { 
+                showTaskOptionsDialog = false
+            },
+            onEdit = {
+                showTaskOptionsDialog = false
+                showEditDialog = true
+            },
+            onDelete = {
+                selectedTask?.let { viewModel.deleteTask(it) }
+                showTaskOptionsDialog = false
+                selectedTask = null
             }
         )
     }
