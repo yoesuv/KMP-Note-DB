@@ -8,10 +8,8 @@ import androidx.navigation.compose.rememberNavController
 import com.yoesuv.kmptask.core.route.AppRoute
 import com.yoesuv.kmptask.feature.home.HomeScreen
 import com.yoesuv.kmptask.feature.splash.SplashScreen
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-@Preview
 fun App() {
     MaterialTheme {
         val navController = rememberNavController()

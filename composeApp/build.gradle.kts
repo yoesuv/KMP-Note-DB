@@ -51,6 +51,8 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.material.icons.extended)
             implementation(libs.kotlinx.coroutines.core)
+
+            implementation(libs.ui.tooling.preview)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
