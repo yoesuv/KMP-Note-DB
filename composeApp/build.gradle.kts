@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    alias(libs.plugins.koin.compiler)
 }
 
 kotlin {
@@ -18,7 +19,7 @@ kotlin {
             freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
-    
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -29,7 +30,7 @@ kotlin {
             linkerOpts.add("-lsqlite3")
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
@@ -51,7 +52,10 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
 
             implementation(libs.ui.tooling.preview)
+            implementation(libs.koin.core)
+            implementation(libs.koin.annotations)
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
