@@ -1,6 +1,6 @@
 # KMP Room Database Example #
 
-Basic CRUD app using Room database with Kotlin Multiplatform.
+Kotlin Multiplatform Compose task manager with Room persistence, Koin DI, navigation, and coroutines for Android/iOS.
 
 #### Screenshot Android ####
 | ![](https://i.imgur.com/cV1lS15.jpeg) | ![](https://i.imgur.com/By6IKSf.jpeg) | ![](https://i.imgur.com/TPUJrLv.jpeg) | ![](https://i.imgur.com/ypV415E.jpeg) |
@@ -11,6 +11,7 @@ Basic CRUD app using Room database with Kotlin Multiplatform.
 | :---: | :---: | :---: | :---: |
 
 ### Libraries ###
+- [Koin](https://insert-koin.io/)
 - [KotlinX Coroutines](https://kotlinlang.org/api/kotlinx.coroutines/)
 - [KotlinX Serialization](https://github.com/Kotlin/kotlinx.serialization)
 - [Navigation](https://mvnrepository.com/artifact/org.jetbrains.androidx.navigation/navigation-compose)
