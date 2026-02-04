@@ -4,9 +4,16 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.yoesuv.kmptask.di.appModule
 import org.koin.core.context.startKoin
 
-fun MainViewController() = ComposeUIViewController { 
+private val koinApp by lazy {
     startKoin {
         modules(appModule)
     }
-    App() 
 }
+
+private fun initKoin() {
+    koinApp
+}
+
+fun MainViewController() = ComposeUIViewController {
+    App()
+}.also { initKoin() }
