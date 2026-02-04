@@ -22,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.yoesuv.kmptask.core.db.rememberAppDatabase
 import com.yoesuv.kmptask.core.models.MyTaskModel
 import com.yoesuv.kmptask.core.theme.AppColors
 import com.yoesuv.kmptask.feature.components.AppTopBar
@@ -30,18 +29,17 @@ import kmpmytask.composeapp.generated.resources.Res
 import kmpmytask.composeapp.generated.resources.app_name
 import kmpmytask.composeapp.generated.resources.empty_task
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen() {
+    val viewModel = koinViewModel<HomeViewModel>()
+    val tasks by viewModel.tasks.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showTaskOptionsDialog by remember { mutableStateOf(false) }
     var selectedTask by remember { mutableStateOf<MyTaskModel?>(null) }
-    val db = rememberAppDatabase()
-    val dao = remember(db) { db.myTaskDao() }
-    val viewModel = remember(dao) { HomeViewModel(dao) }
-    val tasks by viewModel.tasks.collectAsState()
 
     Scaffold(
         topBar = {

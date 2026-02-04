@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    alias(libs.plugins.koin.compiler)
 }
 
 kotlin {
@@ -18,7 +19,7 @@ kotlin {
             freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
-    
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -29,11 +30,11 @@ kotlin {
             linkerOpts.add("-lsqlite3")
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
-            implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -41,7 +42,6 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
@@ -51,7 +51,14 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.material.icons.extended)
             implementation(libs.kotlinx.coroutines.core)
+
+            implementation(libs.ui.tooling.preview)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.annotations)
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
@@ -67,7 +74,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0.0"
+        versionName = "1.0.1"
         setProperty("archivesBaseName", "$applicationId-v$versionName")
     }
     packaging {
@@ -76,8 +83,15 @@ android {
         }
     }
     buildTypes {
-        getByName("release") {
+        getByName("debug") {
             isMinifyEnabled = false
+        }
+        getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -91,7 +105,7 @@ room {
 }
 
 dependencies {
-    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.ui.tooling.preview)
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
